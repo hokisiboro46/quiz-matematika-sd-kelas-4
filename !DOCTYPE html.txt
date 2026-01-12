@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Matematika Kelas 4 SD - Acak Soal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        header {
+            background-color: #43a047;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .mode-pilihan {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .mode-btn {
+            padding: 20px 40px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .mode-btn:hover {
+            transform: scale(1.05);
+        }
+        .gampang { background-color: #66bb6a; }
+        .normal { background-color: #2962ff; }
+        .susah { background-color: #ef5350; }
+        #quiz-area {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+        #soal {
+            font-size: 22px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .pilihan {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .pilihan-btn {
+            padding: 15px;
+            border: 2px solid #43a047;
+            border-radius: 8px;
+            background-color: white;
+            color: #2e7d32;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .pilihan-btn:hover {
+            background-color: #f1f8e9;
+        }
+        #hasil {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        #ulang-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            background-color: #43a047;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            margin: 0 auto;
+        }
+        footer {
+            background-color: #2e7d32;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Quiz Matematika Kelas 4 SD</h1>
+        <p>Pilih Mode Kesulitan - Soal Akan Acak Setiap Kali Main!</p>
+    </header>
+
+    <div class="container">
+        <div class="mode-pilihan">
+            <button class="mode-btn gampang" onclick="mulaiQuiz('gampang')">Mode Gampang</button>
+            <button class="mode-btn normal" onclick="mulaiQuiz('normal')">Mode Normal</button>
+            <button class="mode-btn susah" onclick="mulaiQuiz('susah')">Mode Susah</button>
+        </div>
+
+        <div id="quiz-area">
+            <div id="soal"></div>
+            <div class="pilihan" id="pilihan"></div>
+            <div id="hasil"></div>
+            <button id="ulang-btn" onclick="ulangQuiz()">Ulangi Quiz</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Quiz Matematika Kelas 4 SD - Semangat Belajar!</p>
+    </footer>
+
+    <script>
+        let soalSekarang = 0;
+        let skor = 0;
+        let daftarSoal = [];
+
+        const bankSoal = {
+            gampang: [
+                {
+                    soal: "Berapakah hasil dari 25 + 17?",
+                    pilihan: ["32", "42", "38", "48"],
+                    jawaban: 1
+                },
+                {
+                    soal: "Berapakah hasil dari 50 - 23?",
+                    pilihan: ["27", "37", "23", "33"],
+                    jawaban: 0
+                },
+                {
+                    soal: "Berapakah hasil dari 6 x 8?",
+                    pilihan: ["40", "42", "48", "54"],
+                    jawaban: 2
+                },
+                {
+                    soal: "Berapakah hasil dari 36 : 4?",
+                    pilihan: ["7", "8", "9", "10"],
+                    jawaban: 2
+                },
+                {
+                    soal: "Berapakah jumlah sisi pada sebuah persegi panjang?",
+                    pilihan: ["3", "4", "5", "6"],
+                    jawaban: 1
+                },
+                {
+                    soal: "Berapakah hasil dari 19 + 26?",
+                    pilihan: ["45", "55", "35", "40"],
+                    jawaban: 0
+                },
+                {
+                    soal: "Berapakah hasil dari 75 - 39?",
+                    pilihan: ["36", "46", "34", "44"],
+                    jawaban: 0
+                }
+            ],
+            normal: [
+                {
+                    soal: "Berapakah hasil dari 125 + 87?",
+                    pilihan: ["202", "212", "220", "210"],
+                    jawaban: 1
+                },
+                {
+                    soal: "Berapakah hasil dari 200 - 93?",
+                    pilihan: ["107", "117", "97", "103"],
+                    jawaban: 0
+                },
+                {
+                    soal: "Berapakah hasil dari 15 x 7?",
+                    pilihan: ["95", "105", "115", "125"],
+                    jawaban: 1
+                },
+                {
+                    soal: "Berapakah hasil dari 84 : 6?",
+                    pilihan: ["12", "13", "14", "15"],
+                    jawaban: 2
+                },
+                {
+                    soal: "Jika panjang sisi sebuah persegi adalah 9 cm, berapakah kelilingnya?",
+                    pilihan: ["32 cm", "36 cm", "40 cm", "45 cm"],
+                    jawaban: 1
+                },
+                {
+                    soal: "Berapakah hasil dari 148 + 96?",
+                    pilihan: ["244", "234", "254", "224"],
+                    jawaban: 0
+                },
+                {
+                    soal: "Berapakah hasil dari 35 x 4?",
+                    pilihan: ["120", "130", "140", "150"],
+                    jawaban: 2
+                }
+            ],
+            susah: [
+                {
+                    soal: "Berapakah hasil dari 348 + 275 - 196?",
+                    pilihan: ["427", "437", "447", "457"],
+                    jawaban: 0
+                },
+                {
+                    soal: "Berapakah hasil dari 12 x 9 + 15?",
+                    pilihan: ["113", "123", "133", "143"],
+                    jawaban: 1
+                },
+                {
+                    soal: "Berapakah hasil dari 144 : 8 x 5?",
+                    pilihan: ["70", "80", "90", "100"],
+                    jawaban: 2
+                },
+                {
+                    soal: "Jika sebuah persegi panjang memiliki panjang 12 cm dan lebar 7 cm, berapakah luasnya?",
+                    pilihan: ["74 cm²", "78 cm²", "84 cm²", "94 cm²"],
+                    jawaban: 2
+                },
+                {
+                    soal: "Pak Budi memiliki 4 karung beras, setiap karung berisi 25 kg. Jika dia menjual 65 kg, berapa kg sisa berasnya?",
+                    pilihan: ["35 kg", "45 kg", "55 kg", "65 kg"],
+                    jawaban: 0
+                },
+                {
+                    soal: "Berapakah hasil dari 267 + 189 - 152?",
+                    pilihan: ["304", "314", "324", "334"],
+                    jawaban: 1
+                },
+                {
+                    soal: "Ibu membeli 3 dus telur, setiap dus berisi 24 butir. Jika digunakan 42 butir untuk membuat kue, berapa butir telur yang tersisa?",
+                    pilihan: ["29", "30", "31", "32"],
+                    jawaban: 1
+                }
+            ]
+        };
+
+        function acakSoal(soalArray) {
+            const salinanSoal = [...soalArray];
+            for (let i = salinanSoal.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [salinanSoal[i], salinanSoal[j]] = [salinanSoal[j], salinanSoal[i]];
+            }
+            return salinanSoal;
+        }
+
+        function mulaiQuiz(mode) {
+            document.querySelector('.mode-pilihan').style.display = 'none';
+            document.getElementById('quiz-area').style.display = 'block';
+            soalSekarang = 0;
+            skor = 0;
+            const soalAcak = acakSoal(bankSoal[mode]);
+            daftarSoal = soalAcak.slice(0, 5);
+            tampilkanSoal();
+        }
+
+        function tampilkanSoal() {
+            const soal = daftarSoal[soalSekarang];
+            document.getElementById('soal').textContent = `${soalSekarang + 1}. ${soal.soal}`;
+            
+            const pilihanContainer = document.getElementById('pilihan');
+            pilihanContainer.innerHTML = '';
+            
+            soal.pilihan.forEach((pilih, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'pilihan-btn';
+                btn.textContent = `${String.fromCharCode(65 + index)}. ${pilih}`;
+                btn.onclick = () => cekJawaban(index);
+                pilihanContainer.appendChild(btn);
+            });
+
+            document.getElementById('hasil').textContent = '';
+            document.getElementById('ulang-btn').style.display = 'none';
+        }
+
+        function cekJawaban(pilihanDipilih) {
+            const soal = daftarSoal[soalSekarang];
+            if (pilihanDipilih === soal.jawaban) {
+                skor++;
+                document.getElementById('hasil').textContent = 'Benar sekali! 👍';
+                document.getElementById('hasil').style.color = '#43a047';
+            } else {
+                document.getElementById('hasil').textContent = `Salah 😢 Jawaban yang benar adalah ${String.fromCharCode(65 + soal.jawaban)}. ${soal.pilihan[soal.jawaban]}`;
+                document.getElementById('hasil').style.color = '#ef5350';
+            }
+
+            if (soalSekarang < daftarSoal.length - 1) {
+                setTimeout(() => {
+                    soalSekarang++;
+                    tampilkanSoal();
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    document.getElementById('hasil').textContent = `Quiz Selesai! Skor Kamu: ${skor}/${daftarSoal.length}`;
+                    document.getElementById('hasil').style.color = '#2e7d32';
+                    document.getElementById('ulang-btn').style.display = 'block';
+                }, 1500);
+            }
+        }
+
+        function ulangQuiz() {
+            document.querySelector('.mode-pilihan').style.display = 'flex';
+            document.getElementById('quiz-area').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
